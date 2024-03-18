@@ -8,13 +8,18 @@ const Quiz = () => {
     const [quizEnded, setQuizEnded] = useState(false);
 
     const handleNextQuestion = useCallback(() => {
+
         if (currentQuestionIndex < questions.length - 1) {
+
             setCurrentQuestionIndex(currentQuestionIndex + 1);
-            setTimer(5);
+
+            setTimer(10);
         } else {
+
             setQuizEnded(true);
         }
     }, [currentQuestionIndex, questions]);
+
 
     useEffect(() => {
         async function fetchQuestions() {
@@ -36,24 +41,36 @@ const Quiz = () => {
         fetchQuestions();
     }, []);
 
+
     useEffect(() => {
         const timerId = setInterval(() => {
             if (timer > 0) {
                 setTimer(timer - 1);
             } else {
+
                 handleNextQuestion();
             }
         }, 1000);
 
+
         return () => clearInterval(timerId);
     }, [timer, handleNextQuestion]);
 
-    const handleAnswerClick = (isCorrect) => {
-        if (isCorrect) {
-            setScore(score + 1);
-        }
+
+    const skipQuestion = () => {
         handleNextQuestion();
     };
+
+
+    const handleAnswerClick = (isCorrect) => {
+        if (isCorrect) {
+
+            setScore(score + 1);
+        }
+
+        handleNextQuestion();
+    };
+
 
     if (quizEnded) {
         return (
@@ -64,11 +81,14 @@ const Quiz = () => {
         );
     }
 
+
     const currentQuestion = questions[currentQuestionIndex];
+
 
     if (!currentQuestion) {
         return <div className="loading__main">Loading...</div>;
     }
+
 
     const incorrectAnswers = currentQuestion.incorrect_answers || [];
 
@@ -79,18 +99,23 @@ const Quiz = () => {
                 <h2>Question {currentQuestionIndex + 1}</h2>
                 <p>{currentQuestion.question}</p>
                 <ul>
+
                     {incorrectAnswers.map((answer, index) => (
                         <li key={index}>
                             <button onClick={() => handleAnswerClick(false)}>{answer}</button>
                         </li>
                     ))}
+
                     <li>
                         <button onClick={() => handleAnswerClick(true)}>
                             {currentQuestion.correct_answer}
                         </button>
                     </li>
                 </ul>
+
                 <p>Time left: {timer} seconds</p>
+
+                <button onClick={skipQuestion}>Skip Question</button>
             </div>
         </div>
     );
